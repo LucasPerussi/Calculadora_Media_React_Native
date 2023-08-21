@@ -6,7 +6,7 @@ import styles from "./style";
 export default function Form() {
   const [counter, setCounter] = useState<number>(0);
   const [acumulator, setAcumulator] = useState<number>(0);
-  const [grade, setGrade] = useState<number>(0);
+  const [grade, setGrade] = useState<string>(""); // Alterado para string
   const [messageMedia, setMessageMedia] = useState<string>("Informe as Notas para Calcular");
   const [media, setMedia] = useState<number>(0);
   const [labelMedia, setLabelMedia] = useState<string>('');
@@ -25,13 +25,13 @@ export default function Form() {
       if (media === 0) {
         const calculatedMedia = acumulator / counter;
         setMedia(calculatedMedia);
-        setMessageMedia("A média das " + counter + " informadas é:");
+        setMessageMedia("A média das " + counter + " notas informadas é:");
         setMediaLabel(calculatedMedia);
         setTextButton("Limpar Dados");
       } else {
         setAcumulator(0);
         setCounter(0);
-        setGrade(0);
+        setGrade(""); // Alterado para string vazia
         setTextButton("Calcular Média");
         setMessageMedia("");
         setLabelMedia('');
@@ -44,9 +44,12 @@ export default function Form() {
   }
 
   const addGrade = () => {
-    setAcumulator(acumulator + grade);
-    setCounter(counter + 1);
-    setGrade(0);
+    const parsedGrade = parseFloat(grade);
+    if (!isNaN(parsedGrade)) {
+      setAcumulator(acumulator + parsedGrade);
+      setCounter(counter + 1);
+      setGrade("");
+    }
   };
 
   return (
@@ -57,13 +60,13 @@ export default function Form() {
 
           <TextInput
             style={styles.input}
-            onChangeText={(text) => setGrade(Number(text))}
-            value={grade.toString()}
+            onChangeText={(text) => setGrade(text)} // Alterado para armazenar texto como string
+            value={grade}
             placeholder="9.5"
-            keyboardType="numeric"
+            keyboardType="decimal-pad" // Alterado para "decimal-pad"
           />
 
-          <Text style={styles.formLabel}>Acumulado: {acumulator}</Text>
+          <Text style={styles.formLabel}>Acumulado: {acumulator.toFixed(2)}</Text>
           <Text style={styles.formLabel}>Notas Inseridas: {counter}</Text>
 
           <TouchableOpacity
